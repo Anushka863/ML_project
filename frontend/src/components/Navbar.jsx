@@ -1,19 +1,23 @@
+import { Link, useNavigate } from "react-router-dom";
+
 function Navbar() {
+  const navigate = useNavigate();
+
   return (
     <nav className="navbar">
-      <div className="logo">
+      <Link to="/" className="logo" style={{ textDecoration: "none", color: "inherit" }}>
         🏥 ClinAI
-      </div>
+      </Link>
 
       <div className="nav-links">
-        <a href="#home">Home</a>
-        <a href="#how-it-works">How It Works</a>
-        <a href="#diseases">Diseases</a>
-        <a href="#about">About</a>
+        <Link to="/">Home</Link>
+        <Link to="/how-it-works">How It Works</Link>
+        <a href="/#diseases">Diseases</a>
+        <a href="/#about">About</a>
       </div>
 
-      <button className="nav-button">
-        Start 
+      <button className="nav-button" onClick={() => navigate("/how-it-works")}>
+        Start
       </button>
     </nav>
   );
