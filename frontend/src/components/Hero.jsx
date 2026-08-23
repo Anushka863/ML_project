@@ -25,8 +25,8 @@ function Hero() {
 
         <div className="hero-buttons">
 
-          <button className="primary-button" onClick={() => navigate("/how-it-works")}>
-            Start  →
+          <button className="primary-button" onClick={() => navigate("/patient-assessment")}>
+            Start Assessment →
           </button>
 
           <button className="secondary-button" onClick={() => navigate("/how-it-works")}>
