@@ -11,13 +11,14 @@ function Navbar() {
 
       <div className="nav-links">
         <Link to="/">Home</Link>
+        <Link to="/patient-assessment">Assessment</Link>
         <Link to="/how-it-works">How It Works</Link>
         <a href="/#diseases">Diseases</a>
         <a href="/#about">About</a>
       </div>
 
-      <button className="nav-button" onClick={() => navigate("/how-it-works")}>
-        Start
+      <button className="nav-button" onClick={() => navigate("/patient-assessment")}>
+        Start Assessment
       </button>
     </nav>
   );
