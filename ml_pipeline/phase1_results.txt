@@ -1,0 +1,209 @@
+﻿======================================================================
+  PHASE 1 - LOAD AND VERIFY DATA  (Healthcare ML Pipeline)
+======================================================================
+
+  Script location : C:\Users\Aisha Fathima\OneDrive\Desktop\ML Project\ML_project\ml_pipeline
+  Project root    : C:\Users\Aisha Fathima\OneDrive\Desktop\ML Project\ML_project
+
+----------------------------------------------------------------------
+  Dataset : Diabetes
+  File    : NHANES_diabetes_cleaned.csv
+  Target  : Diabetes
+  Status  : AVAILABLE
+  Notes   : Kidney biomarkers (Creatinine/BUN/eGFR) not expected in this dataset.
+----------------------------------------------------------------------
+
+  [OK]   Found at: C:\Users\Aisha Fathima\OneDrive\Desktop\ML Project\ML_project\NHANES_diabetes_cleaned.csv
+
+  Shape          : 11,452 rows x 11 columns
+
+  Columns (11):
+    - Age
+    - Sex
+    - BMI
+    - Waist
+    - Systolic_BP
+    - Diastolic_BP
+    - HDL
+    - Total_Cholesterol
+    - Glucose
+    - HbA1c
+    - Diabetes
+
+  Data types:
+    Age                       float64
+    Sex                       float64
+    BMI                       float64
+    Waist                     float64
+    Systolic_BP               float64
+    Diastolic_BP              float64
+    HDL                       float64
+    Total_Cholesterol         float64
+    Glucose                   float64
+    HbA1c                     float64
+    Diabetes                  int64
+
+  Clinical feature check (against full 13-feature spec):
+    [OK]   Age
+    [OK]   Sex
+    [OK]   BMI
+    [OK]   Waist
+    [OK]   Systolic_BP
+    [OK]   Diastolic_BP
+    [OK]   HDL
+    [OK]   Total_Cholesterol
+    [OK]   Glucose
+    [OK]   HbA1c
+    [WARN] Creatinine  <-- absent (kidney biomarker, expected only in CKD dataset)
+    [WARN] BUN  <-- absent (kidney biomarker, expected only in CKD dataset)
+    [WARN] eGFR  <-- absent (kidney biomarker, expected only in CKD dataset)
+
+  Patient identifier check (SEQN):
+    [WARN] SEQN column NOT present.
+           Patient tracking will use row index.
+           NOTE: The Colab-generated CSVs dropped SEQN during cleaning.
+
+  Target column ('Diabetes'):
+    Value 0     : 10,371  (90.6%)
+    Value 1     :  1,081  (9.4%)
+
+    [OK]   Binary target confirmed (0 / 1 only)
+    Positive (disease=1) :  1,081  (9.4%)
+    Negative (disease=0) : 10,371  (90.6%)
+    Class imbalance ratio: 1 : 9.6  (neg:pos)
+
+  Missing values per column:
+    BMI                        3,212  (28.0%)
+    Waist                      3,484  (30.4%)
+    Systolic_BP                4,157  (36.3%)
+    Diastolic_BP               4,157  (36.3%)
+    HDL                        4,770  (41.7%)
+    Total_Cholesterol          4,770  (41.7%)
+    Glucose                    7,910  (69.1%)
+    HbA1c                      4,960  (43.3%)
+
+    [INFO] Missing values will be handled via median imputation
+           in Phase 4 (fitted on training data ONLY).
+
+  Duplicate rows         : 2,873
+    [WARN] 2873 fully duplicated rows detected.
+  Infinite values        : 0
+    [OK]   No infinite values.
+
+----------------------------------------------------------------------
+  Dataset : Heart Disease
+  File    : NHANES_heart_disease_cleaned.csv
+  Target  : Heart_Disease
+  Status  : AVAILABLE
+  Notes   : Kidney biomarkers (Creatinine/BUN/eGFR) not expected in this dataset.
+----------------------------------------------------------------------
+
+  [OK]   Found at: C:\Users\Aisha Fathima\OneDrive\Desktop\ML Project\ML_project\NHANES_heart_disease_cleaned.csv
+
+  Shape          : 7,770 rows x 11 columns
+
+  Columns (11):
+    - Age
+    - Sex
+    - BMI
+    - Waist
+    - Systolic_BP
+    - Diastolic_BP
+    - HDL
+    - Total_Cholesterol
+    - Glucose
+    - HbA1c
+    - Heart_Disease
+
+  Data types:
+    Age                       float64
+    Sex                       float64
+    BMI                       float64
+    Waist                     float64
+    Systolic_BP               float64
+    Diastolic_BP              float64
+    HDL                       float64
+    Total_Cholesterol         float64
+    Glucose                   float64
+    HbA1c                     float64
+    Heart_Disease             int64
+
+  Clinical feature check (against full 13-feature spec):
+    [OK]   Age
+    [OK]   Sex
+    [OK]   BMI
+    [OK]   Waist
+    [OK]   Systolic_BP
+    [OK]   Diastolic_BP
+    [OK]   HDL
+    [OK]   Total_Cholesterol
+    [OK]   Glucose
+    [OK]   HbA1c
+    [WARN] Creatinine  <-- absent (kidney biomarker, expected only in CKD dataset)
+    [WARN] BUN  <-- absent (kidney biomarker, expected only in CKD dataset)
+    [WARN] eGFR  <-- absent (kidney biomarker, expected only in CKD dataset)
+
+  Patient identifier check (SEQN):
+    [WARN] SEQN column NOT present.
+           Patient tracking will use row index.
+           NOTE: The Colab-generated CSVs dropped SEQN during cleaning.
+
+  Target column ('Heart_Disease'):
+    Value 0     :  7,025  (90.4%)
+    Value 1     :    745  (9.6%)
+
+    [OK]   Binary target confirmed (0 / 1 only)
+    Positive (disease=1) :    745  (9.6%)
+    Negative (disease=0) :  7,025  (90.4%)
+    Class imbalance ratio: 1 : 9.4  (neg:pos)
+
+  Missing values per column:
+    BMI                        1,827  (23.5%)
+    Waist                      2,033  (26.2%)
+    Systolic_BP                1,933  (24.9%)
+    Diastolic_BP               1,933  (24.9%)
+    HDL                        2,295  (29.5%)
+    Total_Cholesterol          2,295  (29.5%)
+    Glucose                    4,572  (58.8%)
+    HbA1c                      2,029  (26.1%)
+
+    [INFO] Missing values will be handled via median imputation
+           in Phase 4 (fitted on training data ONLY).
+
+  Duplicate rows         : 1,556
+    [WARN] 1556 fully duplicated rows detected.
+  Infinite values        : 0
+    [OK]   No infinite values.
+
+----------------------------------------------------------------------
+  Dataset : CKD
+  File    : NHANES_CKD_cleaned.csv
+  Target  : CKD
+  Status  : PENDING
+  Notes   : File not yet available. Will be added when provided.
+----------------------------------------------------------------------
+
+  [INFO] This dataset is not yet available. Skipping.
+         Will be processed once the file is provided.
+
+======================================================================
+  PHASE 1 SUMMARY TABLE
+======================================================================
+  Disease            Rows  Cols  Positive  Negative   Pos%  Dup Rows
+----------------------------------------------------------------------
+  Diabetes         11,452    11     1,081    10,371   9.4%      2873
+  Heart Disease     7,770    11       745     7,025   9.6%      1556
+
+----------------------------------------------------------------------
+  WARNINGS (non-blocking):
+  W1: SEQN absent in 'NHANES_diabetes_cleaned.csv' - row index will be used for tracking.
+  W2: SEQN absent in 'NHANES_heart_disease_cleaned.csv' - row index will be used for tracking.
+  W3: PENDING: 'NHANES_CKD_cleaned.csv' not yet available - CKD phase deferred.
+
+======================================================================
+  [PHASE 1 COMPLETED SUCCESSFULLY]
+
+  Both available datasets loaded and verified.
+  CKD dataset is pending - will be incorporated once provided.
+  Ready to proceed to PHASE 2 (Data Quality Check).
+======================================================================
