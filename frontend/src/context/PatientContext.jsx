@@ -27,6 +27,7 @@ const initialFormData = {
 
 export function PatientProvider({ children }) {
   const [patientData, setPatientData] = useState(initialFormData);
+  const [predictionResults, setPredictionResults] = useState(null);
 
   const updateField = (field, value) => {
     setPatientData((prev) => {
@@ -52,13 +53,18 @@ export function PatientProvider({ children }) {
 
   const resetForm = () => {
     setPatientData(initialFormData);
+    setPredictionResults(null);
   };
 
   return (
-    <PatientContext.Provider value={{ patientData, setPatientData, updateField, resetForm }}>
+    <PatientContext.Provider value={{
+      patientData, setPatientData, updateField, resetForm,
+      predictionResults, setPredictionResults
+    }}>
       {children}
     </PatientContext.Provider>
   );
 }
 
 export default PatientProvider;
+

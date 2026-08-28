@@ -5,12 +5,80 @@ import { usePatient } from "../context/usePatient";
 
 function PatientReview() {
   const navigate = useNavigate();
-  const { patientData } = usePatient();
-  const [showAnalysisModal, setShowAnalysisModal] = useState(false);
+  const context = usePatient() || {};
+  const patientData = context.patientData || {};
+  const setPatientData = context.setPatientData || (() => {});
+  const setPredictionResults = context.setPredictionResults || (() => {});
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleAnalyzeClick = () => {
-    setShowAnalysisModal(true);
+  const hasAnyData = Boolean(patientData.age || patientData.gender || patientData.systolic || patientData.glucose);
+
+  const fillSampleDataAndAnalyze = () => {
+    const sample = {
+      age: "58",
+      gender: "Male",
+      height: "175",
+      weight: "82",
+      bmi: "26.8",
+      systolic: "138",
+      diastolic: "88",
+      glucose: "126",
+      hba1c: "6.8",
+      hdl: "42",
+      totalCholesterol: "215",
+      creatinine: "1.2",
+      bun: "18",
+      waist: "96"
+    };
+    setPatientData(sample);
   };
+
+  const handleAnalyzeClick = async () => {
+    setLoading(true);
+    setErrorMsg("");
+    try {
+      // Format payload for FastAPI /predict endpoint
+      const payload = {
+        age: parseFloat(patientData.age) || 50,
+        gender: patientData.gender || "Male",
+        height: parseFloat(patientData.height) || 170,
+        weight: parseFloat(patientData.weight) || 70,
+        bmi: parseFloat(patientData.bmi) || 24.2,
+        systolic: parseFloat(patientData.systolic) || 120,
+        diastolic: parseFloat(patientData.diastolic) || 80,
+        glucose: parseFloat(patientData.glucose) || 95,
+        hba1c: parseFloat(patientData.hba1c) || 5.4,
+        hdl: parseFloat(patientData.hdl) || 50,
+        totalCholesterol: parseFloat(patientData.totalCholesterol) || 190,
+        creatinine: parseFloat(patientData.creatinine) || 0.9,
+        bun: parseFloat(patientData.bun) || 14,
+        waist: parseFloat(patientData.waist) || 85
+      };
+
+      const response = await fetch("http://127.0.0.1:8000/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error (${response.status}): ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setPredictionResults(data);
+      setLoading(false);
+      navigate("/results");
+    } catch (err) {
+      console.error("Prediction API failed:", err);
+      setErrorMsg("Could not connect to FastAPI Backend endpoint. Make sure 'uvicorn backend.app.main:app' is running.");
+      setLoading(false);
+    }
+  };
+
+
+
 
   return (
     <div className="page-wrapper">
@@ -26,7 +94,26 @@ function PatientReview() {
           </p>
         </header>
 
+        {!hasAnyData && (
+          <div className="validation-alert" style={{ marginBottom: "2rem", background: "rgba(37, 99, 235, 0.05)", borderColor: "rgba(37, 99, 235, 0.2)", color: "#1e40af" }}>
+            <span className="alert-icon">ℹ️</span>
+            <div>
+              <strong>No Patient Parameters Entered Yet</strong>
+              <p>You opened the review page directly. Complete the clinical assessment or click below to load sample patient data.</p>
+              <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+                <button type="button" className="secondary-button" onClick={() => navigate("/patient-assessment")}>
+                  ← Go to Assessment Form
+                </button>
+                <button type="button" className="primary-button" onClick={fillSampleDataAndAnalyze}>
+                  ⚡ Load Sample Patient Data
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Summary Content Cards */}
+
         <div className="summary-cards">
           {/* Basic Information Card */}
           <div className="summary-card">
@@ -119,12 +206,23 @@ function PatientReview() {
           </div>
         </div>
 
+        {errorMsg && (
+          <div className="validation-alert" style={{ marginBottom: "1.5rem", background: "#fef2f2", borderColor: "#fca5a5", color: "#991b1b" }}>
+            <span className="alert-icon">⚠️</span>
+            <div>
+              <strong>Connection Error</strong>
+              <p>{errorMsg}</p>
+            </div>
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div className="review-actions">
           <button
             type="button"
             className="secondary-button back-btn"
             onClick={() => navigate("/patient-assessment")}
+            disabled={loading}
           >
             ← Edit Information
           </button>
@@ -132,38 +230,15 @@ function PatientReview() {
             type="button"
             className="primary-button analyze-btn"
             onClick={handleAnalyzeClick}
+            disabled={loading}
           >
-            Analyze Patient →
+            {loading ? "Analyzing Patient GNN..." : "Analyze Patient →"}
           </button>
         </div>
-
-        {/* Analysis Modal Placeholder */}
-        {showAnalysisModal && (
-          <div className="modal-backdrop" onClick={() => setShowAnalysisModal(false)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-icon">🕸️</div>
-              <h3>GNN Multi-Disease Risk Prediction</h3>
-              <p>
-                Patient clinical profile is validated and ready for backend inference.
-              </p>
-              <div className="modal-info-pill">
-                Multi-disease targets: Diabetes • Heart Disease • Chronic Kidney Disease
-              </div>
-              <p className="modal-subtext">
-                (Backend model endpoint integration point)
-              </p>
-              <button
-                className="primary-button modal-close-btn"
-                onClick={() => setShowAnalysisModal(false)}
-              >
-                Close Summary
-              </button>
-            </div>
-          </div>
-        )}
       </main>
     </div>
   );
 }
 
 export default PatientReview;
+
