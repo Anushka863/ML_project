@@ -9,8 +9,28 @@ import AdditionalInfoSection from "../components/assessment/AdditionalInfoSectio
 
 function PatientAssessment() {
   const navigate = useNavigate();
-  const { patientData, updateField } = usePatient();
+  const { patientData, updateField, setPatientData } = usePatient();
   const [errors, setErrors] = useState({});
+
+  const fillDemoData = () => {
+    setPatientData({
+      age: "58",
+      gender: "Male",
+      height: "175",
+      weight: "82",
+      bmi: "26.8",
+      systolic: "138",
+      diastolic: "88",
+      glucose: "126",
+      hba1c: "6.8",
+      hdl: "42",
+      totalCholesterol: "215",
+      creatinine: "1.2",
+      bun: "18",
+      waist: "96"
+    });
+    setErrors({});
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -112,23 +132,38 @@ function PatientAssessment() {
 
       <main className="assessment-container">
         {/* Header Section */}
-        <header className="page-header">
+        <header className="page-header" style={{ position: "relative" }}>
           <div className="header-badge">Clinical Intake</div>
           <h1>Patient Assessment</h1>
           <p className="page-subtitle">
             Enter the patient's clinical information to assess their health risk.
           </p>
+          <div style={{ marginTop: "1rem" }}>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={fillDemoData}
+              style={{ background: "rgba(37, 99, 235, 0.1)", borderColor: "var(--accent-primary, #2563eb)", color: "#2563eb", fontWeight: "600" }}
+            >
+              ⚡ Auto-Fill Sample Patient Data
+            </button>
+          </div>
         </header>
 
         {Object.keys(errors).length > 0 && (
           <div className="validation-alert" role="alert">
             <span className="alert-icon">⚠️</span>
             <div>
-              <strong>Please check the form for errors</strong>
-              <p>Ensure all required fields are filled out with valid numeric values before continuing.</p>
+              <strong>Please check the form for errors ({Object.keys(errors).length} required fields missing):</strong>
+              <ul style={{ marginTop: "0.5rem", paddingLeft: "1.2rem", fontSize: "0.85rem" }}>
+                {Object.entries(errors).map(([key, msg]) => (
+                  <li key={key}><strong>{key.toUpperCase()}</strong>: {msg}</li>
+                ))}
+              </ul>
             </div>
           </div>
         )}
+
 
         {/* Assessment Form */}
         <form onSubmit={handleSubmit} className="assessment-form" noValidate>
