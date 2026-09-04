@@ -32,3 +32,22 @@ ml_pipeline/imputers/
 # ── OS ────────────────────────────────────
 .DS_Store
 Thumbs.db
+# Large datasets
+*.zip
+
+# PTB-XL and other datasets
+data/raw/
+data/processed/
+data/ptbxl/
+
+# ECG records (if extracted)
+records100/
+records500/
+
+# Reports generated during training
+reports/*.png
+reports/*.csv
+
+# Python cache
+__pycache__/
+*.pyc
