@@ -1,0 +1,10 @@
+column,missing_count,missing_percentage
+height,2,33.33
+weight,2,33.33
+sex,1,16.67
+age,1,16.67
+ecg_id,0,0.0
+patient_id,0,0.0
+scp_codes,0,0.0
+filename_lr,0,0.0
+target,0,0.0

@@ -6,11 +6,14 @@ import BasicInfoSection from "../components/assessment/BasicInfoSection";
 import VitalSignsSection from "../components/assessment/VitalSignsSection";
 import LabInfoSection from "../components/assessment/LabInfoSection";
 import AdditionalInfoSection from "../components/assessment/AdditionalInfoSection";
+import { predictPatientRisk } from "../services/api";
 
 function PatientAssessment() {
   const navigate = useNavigate();
-  const { patientData, updateField, setPatientData } = usePatient();
+  const { patientData, updateField, setPatientData, setPredictionResults } = usePatient();
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   const fillDemoData = () => {
     setPatientData({
@@ -30,6 +33,7 @@ function PatientAssessment() {
       waist: "96"
     });
     setErrors({});
+    setApiError("");
   };
 
   const validateForm = () => {
@@ -117,8 +121,28 @@ function PatientAssessment() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    if (!validateForm()) {
+      window.scrollTo({ top: 100, behavior: "smooth" });
+      return;
+    }
+    setLoading(true);
+    setApiError("");
+    try {
+      const data = await predictPatientRisk(patientData);
+      setPredictionResults(data);
+      setLoading(false);
+      navigate("/results");
+    } catch (err) {
+      console.error("Prediction failed:", err);
+      setApiError(err.message || "Failed to connect to backend prediction endpoint.");
+      setLoading(false);
+    }
+  };
+
+  const handleReviewFirst = () => {
     if (validateForm()) {
       navigate("/patient-review");
     } else {
@@ -136,7 +160,7 @@ function PatientAssessment() {
           <div className="header-badge">Clinical Intake</div>
           <h1>Patient Assessment</h1>
           <p className="page-subtitle">
-            Enter the patient's clinical information to assess their health risk.
+            Enter the patient's clinical information to assess their health risk using the Phase 5 PTB-XL Multimodal GNN.
           </p>
           <div style={{ marginTop: "1rem" }}>
             <button
@@ -164,6 +188,15 @@ function PatientAssessment() {
           </div>
         )}
 
+        {apiError && (
+          <div className="validation-alert" style={{ marginBottom: "1.5rem", background: "#fef2f2", borderColor: "#fca5a5", color: "#991b1b" }}>
+            <span className="alert-icon">⚠️</span>
+            <div>
+              <strong>Inference Service Error</strong>
+              <p>{apiError}</p>
+            </div>
+          </div>
+        )}
 
         {/* Assessment Form */}
         <form onSubmit={handleSubmit} className="assessment-form" noValidate>
@@ -192,9 +225,18 @@ function PatientAssessment() {
           />
 
           {/* Bottom Action Footer */}
-          <div className="form-action-footer">
-            <button type="submit" className="primary-button submit-btn">
-              Continue to Review →
+          <div className="form-action-footer" style={{ display: "flex", gap: "1rem", justifyContent: "flex-end", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={handleReviewFirst}
+              disabled={loading}
+              style={{ fontWeight: "600" }}
+            >
+              Review Summary First
+            </button>
+            <button type="submit" className="primary-button submit-btn" disabled={loading}>
+              {loading ? "Analyzing Multimodal GNN..." : "Submit Assessment →"}
             </button>
           </div>
         </form>

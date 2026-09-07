@@ -3,8 +3,8 @@ import ast
 import os
 
 def create_phase2_reports():
-    base_dir = r"c:\Users\Aisha Fathima\OneDrive\Desktop\ML Project\ML_project"
-    data_dir = os.path.join(base_dir, "data", "ptbxl", "ptb-xl-a-large-publicly-available-electrocardiography-dataset-1.0.3")
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    data_dir = os.path.join(project_root, "data", "ptbxl", "ptb-xl-a-large-publicly-available-electrocardiography-dataset-1.0.3")
     db_path = os.path.join(data_dir, "ptbxl_database.csv")
     
     if not os.path.exists(db_path):
@@ -27,7 +27,7 @@ def create_phase2_reports():
 
     df['target'] = df['scp_codes'].apply(is_normal)
     
-    reports_dir = os.path.join(base_dir, "reports")
+    reports_dir = os.path.join(project_root, "reports")
     os.makedirs(reports_dir, exist_ok=True)
     
     # Label distribution

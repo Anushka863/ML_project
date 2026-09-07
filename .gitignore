@@ -23,11 +23,13 @@ env/
 .venv/
 
 # ── ML model artifacts (generated files) ──
+models/
 ml_pipeline/models/
 ml_pipeline/scalers/
 ml_pipeline/imputers/
 *.pt
 *.pth
+*.joblib
 
 # ── OS ────────────────────────────────────
 .DS_Store
@@ -51,3 +53,5 @@ reports/*.csv
 # Python cache
 __pycache__/
 *.pyc
+
+frontend/.env

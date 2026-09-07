@@ -8,14 +8,29 @@ from backend.app.api.routes import router
 
 app = FastAPI(
     title="Explainable Multi-Disease Clinical Decision Support System",
-    description="FastAPI Backend for GNN-based clinical risk prediction & XAI",
+    description="FastAPI Backend for Phase 5 PTB-XL Multimodal GNN clinical risk prediction & XAI",
     version="1.0.0"
 )
 
-# Enable CORS for React frontend (Vite dev server)
+# Explicit CORS origins for frontend development servers
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
+    "http://localhost:5175",
+    "http://127.0.0.1:5175",
+    "http://localhost:5176",
+    "http://127.0.0.1:5176",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins for local dev
+    allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,7 +45,8 @@ def root():
     return {
         "message": "Explainable Multi-Disease Clinical Decision Support API",
         "docs": "/docs",
-        "health": "/health"
+        "health": "/health",
+        "model_info": "/model-info"
     }
 
 

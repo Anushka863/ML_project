@@ -1,0 +1,4 @@
+class,count,percentage
+Normal (0),3,50.0
+Abnormal (1),3,50.0
+Total,6,100.0

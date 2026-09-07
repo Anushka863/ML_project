@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { usePatient } from "../context/usePatient";
+import { predictPatientRisk } from "../services/api";
 
 function PatientReview() {
   const navigate = useNavigate();
@@ -35,50 +36,22 @@ function PatientReview() {
   };
 
   const handleAnalyzeClick = async () => {
+    if (loading) return; // Prevent duplicate submissions
     setLoading(true);
     setErrorMsg("");
+
     try {
-      // Format payload for FastAPI /predict endpoint
-      const payload = {
-        age: parseFloat(patientData.age) || 50,
-        gender: patientData.gender || "Male",
-        height: parseFloat(patientData.height) || 170,
-        weight: parseFloat(patientData.weight) || 70,
-        bmi: parseFloat(patientData.bmi) || 24.2,
-        systolic: parseFloat(patientData.systolic) || 120,
-        diastolic: parseFloat(patientData.diastolic) || 80,
-        glucose: parseFloat(patientData.glucose) || 95,
-        hba1c: parseFloat(patientData.hba1c) || 5.4,
-        hdl: parseFloat(patientData.hdl) || 50,
-        totalCholesterol: parseFloat(patientData.totalCholesterol) || 190,
-        creatinine: parseFloat(patientData.creatinine) || 0.9,
-        bun: parseFloat(patientData.bun) || 14,
-        waist: parseFloat(patientData.waist) || 85
-      };
-
-      const response = await fetch("http://127.0.0.1:8000/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error (${response.status}): ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      // Execute prediction via clean centralized API service
+      const data = await predictPatientRisk(patientData);
       setPredictionResults(data);
       setLoading(false);
       navigate("/results");
     } catch (err) {
       console.error("Prediction API failed:", err);
-      setErrorMsg("Could not connect to FastAPI Backend endpoint. Make sure 'uvicorn backend.app.main:app' is running.");
+      setErrorMsg(err.message || "Failed to connect to backend prediction endpoint.");
       setLoading(false);
     }
   };
-
-
-
 
   return (
     <div className="page-wrapper">
@@ -90,7 +63,7 @@ function PatientReview() {
           <div className="header-badge">Clinical Review</div>
           <h1>Patient Summary</h1>
           <p className="page-subtitle">
-            Verify patient clinical parameters before running risk prediction analysis.
+            Verify patient clinical parameters before running Phase 5 PTB-XL Multimodal GNN risk assessment.
           </p>
         </header>
 
@@ -113,7 +86,6 @@ function PatientReview() {
         )}
 
         {/* Summary Content Cards */}
-
         <div className="summary-cards">
           {/* Basic Information Card */}
           <div className="summary-card">
@@ -210,7 +182,7 @@ function PatientReview() {
           <div className="validation-alert" style={{ marginBottom: "1.5rem", background: "#fef2f2", borderColor: "#fca5a5", color: "#991b1b" }}>
             <span className="alert-icon">⚠️</span>
             <div>
-              <strong>Connection Error</strong>
+              <strong>Inference Error</strong>
               <p>{errorMsg}</p>
             </div>
           </div>
@@ -241,4 +213,3 @@ function PatientReview() {
 }
 
 export default PatientReview;
-

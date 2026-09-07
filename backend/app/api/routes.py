@@ -33,19 +33,29 @@ def health_check():
 def model_info():
     """Model architecture and dataset info endpoint."""
     return {
-        "model_name": "Multi-Disease Patient Similarity Graph Neural Network (GNN)",
-        "diseases_covered": ["Diabetes Mellitus", "Heart Disease", "Chronic Kidney Disease (CKD)"],
+        "model_name": "PTB-XL Multimodal Graph Neural Network (GNN)",
+        "diseases_covered": ["ECG Arrhythmia & Diagnostic Abnormality", "Cardiovascular Disease"],
         "architecture": {
-            "tabular_encoder": "MLP (64-dim embedding)",
-            "graph_type": "k-NN Cosine Similarity Graph (k=5)",
-            "gnn_backbone": "MultiDiseaseGNN (GCN/GAT layers)",
-            "xai_engine": "Tabular Feature Attributions + Grad-CAM"
+            "clinical_encoder": "Clinical MLP (4 -> 64-dim embedding)",
+            "ecg_encoder": "1D CNN Waveform Encoder (12 leads -> 128-dim embedding)",
+            "multimodal_fusion": "Multimodal Fusion Layer (128-dim)",
+            "graph_type": "k-NN Patient Similarity Graph (k=5, Cosine Metric)",
+            "gnn_backbone": "MultiDiseaseGNN (GCN/GAT Message Passing)",
+            "checkpoint": "models/ptbxl_multimodal/best_model.pt"
         },
         "supported_features": [
             "age", "gender", "height", "weight", "bmi",
             "systolic", "diastolic", "glucose", "hba1c",
             "hdl", "totalCholesterol", "creatinine", "bun", "waist"
-        ]
+        ],
+        "test_performance": {
+            "accuracy": "72.71%",
+            "precision": "0.8628",
+            "recall": "0.6296",
+            "specificity": "0.8617",
+            "f1_score": "0.7280",
+            "roc_auc": "0.8252"
+        }
     }
 
 

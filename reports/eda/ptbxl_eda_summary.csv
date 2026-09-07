@@ -1,0 +1,19 @@
+metric,value
+total_records,6
+unique_patients,5
+multi_record_patients,1
+multi_record_patient_pct,20.0
+records_per_patient_max,2
+records_per_patient_mean,1.2
+normal_count,3
+abnormal_count,3
+normal_pct,50.0
+abnormal_pct,50.0
+duplicate_rows,0
+duplicate_ecg_ids,0
+signals_audited,6
+unreadable_signals,6
+expected_shape,"(1000, 12)"
+confirmed_leads,12
+confirmed_duration_sec,10.0
+confirmed_fs_hz,100

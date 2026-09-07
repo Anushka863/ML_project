@@ -1,0 +1,2 @@
+expected_leads,expected_fs,expected_samples,duration_sec,status
+12,100,1000,10.0,PASS

@@ -64,9 +64,18 @@ class FeatureAttribution(BaseModel):
 
 
 class PredictionResponse(BaseModel):
-    status: str
-    predictions: Dict[str, SingleDiseasePrediction]
-    clinical_explanation: List[FeatureAttribution]
+    status: str = "success"
+    prediction: str = Field(..., description="Normal or Abnormal prediction from PTB-XL Multimodal GNN")
+    probability: float = Field(..., ge=0.0, le=1.0, description="Model sigmoid probability for abnormality")
+    confidence: float = Field(..., ge=0.0, le=100.0, description="Confidence percentage")
+    risk_level: str = Field(..., description="Risk category: Low Risk, Moderate Risk, or High Risk")
+    model: str = Field(default="PTB-XL Multimodal GNN", description="Model identifier")
+    disclaimer: str = Field(
+        default="This AI-generated result is for research/educational purposes and is not a medical diagnosis.",
+        description="Medical disclaimer"
+    )
+    predictions: Optional[Dict[str, SingleDiseasePrediction]] = None
+    clinical_explanation: Optional[List[FeatureAttribution]] = None
     image_explanation: Optional[Dict[str, Any]] = None
     graph_explanation: Optional[Dict[str, Any]] = None
-    disclaimer: str = "This system is a clinical decision-support prototype and is NOT intended to replace a qualified healthcare professional."
+
