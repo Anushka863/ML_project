@@ -26,6 +26,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from ml_pipeline.train_ptbxl_multimodal import PTBXLMultimodalGNN
 from app.graph.patient_graph import PatientGraphBuilder
+from explainability.ptbxl_explainer import PTBXLExplainer
 
 logger = logging.getLogger("ptbxl_inference")
 
@@ -73,6 +74,7 @@ class PTBXLInferenceService:
         
         self.scaler = None
         self.model = None
+        self.explainer = None
         self.graph_builder = PatientGraphBuilder(k=5, metric="cosine")
         
         self._load_scaler()
@@ -143,6 +145,9 @@ class PTBXLInferenceService:
         for param in self.model.parameters():
             param.requires_grad = False
 
+        # Initialize genuine model-derived explainer
+        self.explainer = PTBXLExplainer(model=self.model, device=self.device)
+
     def _encode_gender(self, gender_val: Any) -> float:
         """Encodes gender string to binary float matching PTB-XL preprocessor."""
         if isinstance(gender_val, (int, float)):
@@ -178,7 +183,8 @@ class PTBXLInferenceService:
     def predict(
         self,
         patient_data: Dict[str, Any],
-        ecg_waveform: Optional[np.ndarray] = None
+        ecg_waveform: Optional[np.ndarray] = None,
+        explain: bool = True
     ) -> Dict[str, Any]:
         """
         Executes leak-free multimodal GNN inference for a patient intake request.
@@ -186,9 +192,10 @@ class PTBXLInferenceService:
         Args:
             patient_data: Dictionary containing patient clinical parameters.
             ecg_waveform: Optional (12, 1000) or (1, 12, 1000) ECG array.
+            explain: Whether to compute genuine model-derived Integrated Gradients XAI.
             
         Returns:
-            Dictionary containing prediction, probability, confidence, and metadata.
+            Dictionary containing prediction, probability, confidence, metadata, and XAI.
         """
         if self.model is None:
             self._load_model()
@@ -238,7 +245,22 @@ class PTBXLInferenceService:
         # Model confidence percentage relative to the predicted class
         confidence_pct = round((prob if prob >= 0.50 else (1.0 - prob)) * 100, 1)
 
-        return {
+        # 5. Model-Derived XAI Generation
+        xai_result = None
+        if explain:
+            if self.explainer is None:
+                self.explainer = PTBXLExplainer(model=self.model, device=self.device)
+            xai_result = self.explainer.explain(
+                clinical_tensor=clinical_tensor,
+                ecg_tensor=ecg_tensor,
+                raw_clinical_dict=patient_data
+            )
+            # Re-enforce evaluation and no_grad state on model parameters
+            self.model.eval()
+            for param in self.model.parameters():
+                param.requires_grad = False
+
+        result = {
             "prediction": prediction_label,
             "probability": round(prob, 4),
             "confidence": confidence_pct,
@@ -246,3 +268,10 @@ class PTBXLInferenceService:
             "model": "PTB-XL Multimodal GNN",
             "disclaimer": "This AI-generated result is for research/educational purposes and is not a medical diagnosis."
         }
+        if xai_result is not None:
+            result["xai"] = xai_result
+            result["clinical_explanation"] = xai_result["clinical_features"]
+            result["graph_explanation"] = xai_result["graph"]
+            result["ecg_explanation"] = xai_result["ecg"]
+
+        return result

@@ -62,6 +62,17 @@ class FeatureAttribution(BaseModel):
     value: float
     importance: float
     impact: str
+    direction: Optional[str] = None
+    attribution: Optional[float] = None
+
+
+class AdditionalClinicalMarker(BaseModel):
+    marker: str
+    value: float
+    unit: str
+    reference_range: str
+    clinical_status: str
+    note: str = "General clinical marker; NOT an input feature to the PTB-XL ECG GNN model."
 
 
 class PredictionResponse(BaseModel):
@@ -79,4 +90,8 @@ class PredictionResponse(BaseModel):
     clinical_explanation: Optional[List[FeatureAttribution]] = None
     image_explanation: Optional[Dict[str, Any]] = None
     graph_explanation: Optional[Dict[str, Any]] = None
+    ecg_explanation: Optional[Dict[str, Any]] = None
+    xai: Optional[Dict[str, Any]] = None
+    additional_clinical_info: Optional[List[AdditionalClinicalMarker]] = None
+
 
