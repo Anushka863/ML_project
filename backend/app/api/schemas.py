@@ -2,7 +2,7 @@
 API Pydantic Schemas for Request & Response Validation.
 Phase 15 — Matches frontend assessment form fields exactly.
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Dict, Any, Optional, List
 
 
@@ -29,8 +29,8 @@ class PatientAssessmentRequest(BaseModel):
     # Additional
     waist: Optional[float] = Field(None, ge=0, description="Waist Circumference (cm)")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "age": 58,
                 "gender": "Male",
@@ -48,6 +48,7 @@ class PatientAssessmentRequest(BaseModel):
                 "waist": 96
             }
         }
+    )
 
 
 class SingleDiseasePrediction(BaseModel):

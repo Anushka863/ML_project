@@ -58,19 +58,25 @@ class TestBackendAPI(unittest.TestCase):
         self.assertIn("test_performance", data)
 
     def test_03_predict_valid_patient(self):
-        """POST /predict executes inference and returns structured response."""
+        """POST /predict executes inference if checkpoint exists or returns 503 if checkpoint not available."""
         response = self.client.post("/predict", json=self.valid_payload)
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        
-        self.assertEqual(data["status"], "success")
-        self.assertIn(data["prediction"], ["Normal", "Abnormal"])
-        self.assertGreaterEqual(data["probability"], 0.0)
-        self.assertLessEqual(data["probability"], 1.0)
-        self.assertIn(data["risk_level"], ["Low Risk", "Moderate Risk", "High Risk"])
-        self.assertEqual(data["model"], "PTB-XL Multimodal GNN")
-        self.assertIn("disclaimer", data)
-        self.assertIn("predictions", data)
+        checkpoint_exists = (PROJECT_ROOT / "models" / "ptbxl_multimodal" / "best_model.pt").exists()
+        if checkpoint_exists:
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            self.assertEqual(data["status"], "success")
+            self.assertIn(data["prediction"], ["Normal", "Abnormal"])
+            self.assertGreaterEqual(data["probability"], 0.0)
+            self.assertLessEqual(data["probability"], 1.0)
+            self.assertIn(data["risk_level"], ["Low Risk", "Moderate Risk", "High Risk"])
+            self.assertEqual(data["model"], "PTB-XL Multimodal GNN")
+            self.assertIn("disclaimer", data)
+            self.assertIn("predictions", data)
+        else:
+            self.assertEqual(response.status_code, 503)
+            data = response.json()
+            self.assertIn("detail", data)
+            self.assertIn("checkpoint not available", data["detail"].lower())
 
     def test_04_predict_invalid_missing_fields_rejected(self):
         """POST /predict returns 422 Unprocessable Entity for missing required fields."""

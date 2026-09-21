@@ -3,8 +3,8 @@
 **Target**: Binary Heart Disease Detection (Normal vs Abnormal)  
 **Evaluation Set**: Untouched Patient Test Set (3272 recordings, 2831 unique patients)  
 **Hardware Device**: CPU  
-**Evaluation Time**: 41.56s  
-**Date**: 2026-09-05 02:54:03  
+**Evaluation Time**: 26.02s  
+**Date**: 2026-09-21 09:03:31  
 
 ---
 
@@ -12,12 +12,12 @@
 
 | Metric | Score | Clinical Interpretation |
 |---|---|---|
-| **Accuracy** | **72.71%** | Overall correct classification rate across test cohort |
-| **Precision** | **0.8628** | True abnormal proportion among positive alarms |
-| **Recall / Sensitivity** | **0.6296** | Cardiac abnormality detection sensitivity |
-| **Specificity** | **0.8617** | True normal ECG specificity (false alarm resistance) |
-| **F1-Score** | **0.7280** | Balanced harmonic mean of precision & recall |
-| **ROC-AUC** | **0.8252** | Area Under Receiver Operating Characteristic Curve |
+| **Accuracy** | **85.27%** | Overall correct classification rate across test cohort |
+| **Precision** | **0.8848** | True abnormal proportion among positive alarms |
+| **Recall / Sensitivity** | **0.8577** | Cardiac abnormality detection sensitivity |
+| **Specificity** | **0.8457** | True normal ECG specificity (false alarm resistance) |
+| **F1-Score** | **0.8711** | Balanced harmonic mean of precision & recall |
+| **ROC-AUC** | **0.9230** | Area Under Receiver Operating Characteristic Curve |
 
 ---
 
@@ -25,10 +25,10 @@
 
 | Metric | Value |
 |---|---|
-| **True Negatives (TN)** | 1184 (Normal correctly classified) |
-| **False Positives (FP)** | 190 (Normal incorrectly flagged as abnormal) |
-| **False Negatives (FN)** | 703 (Abnormal missed) |
-| **True Positives (TP)** | 1195 (Abnormal correctly identified) |
+| **True Negatives (TN)** | 1162 (Normal correctly classified) |
+| **False Positives (FP)** | 212 (Normal incorrectly flagged as abnormal) |
+| **False Negatives (FN)** | 270 (Abnormal missed) |
+| **True Positives (TP)** | 1628 (Abnormal correctly identified) |
 
 ---
 
@@ -37,12 +37,12 @@
 ```text
               precision    recall  f1-score   support
 
-  Normal (0)     0.6275    0.8617    0.7262      1374
-Abnormal (1)     0.8628    0.6296    0.7280      1898
+  Normal (0)     0.8115    0.8457    0.8282      1374
+Abnormal (1)     0.8848    0.8577    0.8711      1898
 
-    accuracy                         0.7271      3272
-   macro avg     0.7451    0.7457    0.7271      3272
-weighted avg     0.7640    0.7271    0.7272      3272
+    accuracy                         0.8527      3272
+   macro avg     0.8481    0.8517    0.8496      3272
+weighted avg     0.8540    0.8527    0.8531      3272
 
 ```
 

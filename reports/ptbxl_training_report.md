@@ -4,15 +4,15 @@
 **Execution Mode**: Full Training Run  
 **Hardware Device**: CPU  
 **Random Seed**: 42  
-**Date**: 2026-09-05 02:51:25  
+**Date**: 2026-09-20 12:51:15  
 
 ---
 
 ## 1. Dataset & Patient-Level Splitting
 - **Total Dataset Records**: 21799
 - **Total Unique Patients**: 18869
-- **Training Set**: 13208 unique patients (2000 / 15208 records used)
-- **Validation Set**: 2830 unique patients (500 / 3319 records used)
+- **Training Set**: 13208 unique patients (15208 / 15208 records used)
+- **Validation Set**: 2830 unique patients (3319 / 3319 records used)
 - **Test Set (Untouched)**: 2831 unique patients (3272 records reserved)
 - **Class Distribution (Train)**: 6711 Normal (44.1%) / 8497 Abnormal (55.9%)
 - **Split Integrity Verification**:
@@ -29,21 +29,21 @@
 - **Multimodal Fusion**: Cross-modality projection -> `MultimodalFusion` (128-dim)
 - **Graph Topology**: `PatientGraphBuilder` (k=5 nearest neighbors via Cosine Similarity)
 - **GNN Backbone**: `MultiDiseaseGNN` (64 hidden -> 32 output -> binary disease logits)
-- **Loss Function**: `BCEWithLogitsLoss` (pos_weight=1.15)
+- **Loss Function**: `BCEWithLogitsLoss` (pos_weight=0.79)
 - **Optimizer**: `AdamW` (learning_rate=0.001, weight_decay=0.0001)
 - **Scheduler**: `ReduceLROnPlateau` (factor=0.5, patience=2)
-- **Batch Size**: 16
-- **Early Stopping Patience**: 3 epochs
+- **Batch Size**: 64
+- **Early Stopping Patience**: 5 epochs
 
 ---
 
-## 3. Best Validation Performance (Epoch 1)
-- **Best Validation Loss**: 0.5913
-- **Validation Accuracy**: 75.00%
-- **Validation Precision**: 0.7500
-- **Validation Recall / Sensitivity**: 0.6953
-- **Validation F1-Score**: 0.7216
-- **Validation ROC-AUC**: 0.8005
+## 3. Best Validation Performance (Epoch 5)
+- **Best Validation Loss**: 0.3131
+- **Validation Accuracy**: 84.66%
+- **Validation Precision**: 0.8726
+- **Validation Recall / Sensitivity**: 0.8556
+- **Validation F1-Score**: 0.8640
+- **Validation ROC-AUC**: 0.9223
 
 ---
 
@@ -51,10 +51,11 @@
 
 | Epoch | Train Loss | Val Loss | Val Accuracy | Val Precision | Val Recall | Val F1 | Val ROC-AUC | LR |
 |---|---|---|---|---|---|---|---|---|
-| 1 | 0.6427 | 0.5913 | 0.7500 | 0.7500 | 0.6953 | 0.7216 | 0.8005 | 1.0e-03 |
-| 2 | 0.6265 | 0.6059 | 0.7420 | 0.7281 | 0.7124 | 0.7202 | 0.7862 | 1.0e-03 |
-| 3 | 0.5697 | 0.5979 | 0.7480 | 0.7257 | 0.7382 | 0.7319 | 0.8011 | 1.0e-03 |
-| 4 | 0.6194 | 0.7269 | 0.6180 | 0.5536 | 0.9313 | 0.6944 | 0.7827 | 5.0e-04 |
+| 1 | 0.3977 | 0.3972 | 0.7785 | 0.9522 | 0.6434 | 0.7679 | 0.9126 | 1.0e-03 |
+| 2 | 0.3315 | 0.3722 | 0.7999 | 0.9527 | 0.6825 | 0.7953 | 0.9167 | 1.0e-03 |
+| 3 | 0.3201 | 0.3201 | 0.8448 | 0.8730 | 0.8513 | 0.8620 | 0.9210 | 1.0e-03 |
+| 4 | 0.3199 | 0.3296 | 0.8132 | 0.9434 | 0.7148 | 0.8134 | 0.9163 | 1.0e-03 |
+| 5 | 0.3137 | 0.3131 | 0.8466 | 0.8726 | 0.8556 | 0.8640 | 0.9223 | 1.0e-03 |
 
 ---
 

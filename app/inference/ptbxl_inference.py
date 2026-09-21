@@ -109,6 +109,15 @@ class PTBXLInferenceService:
 
     def _load_model(self):
         """Instantiates and loads PTBXLMultimodalGNN in evaluation mode."""
+        if not self.checkpoint_path.exists():
+            logger.warning(
+                "Trained checkpoint not found at %s. "
+                "Inference will report 'trained checkpoint not available' until Phase 5 training completes.",
+                self.checkpoint_path
+            )
+            self.model = None
+            return
+
         self.model = PTBXLMultimodalGNN(
             clinical_in=4,
             ecg_channels=12,
@@ -120,12 +129,6 @@ class PTBXLInferenceService:
             k_neighbors=5,
             dropout_rate=0.0
         ).to(self.device)
-
-        if not self.checkpoint_path.exists():
-            raise FileNotFoundError(
-                f"Model checkpoint not found at {self.checkpoint_path}. "
-                "Ensure Phase 5 training has been executed."
-            )
 
         checkpoint = torch.load(self.checkpoint_path, map_location=self.device)
         if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
@@ -189,6 +192,12 @@ class PTBXLInferenceService:
         """
         if self.model is None:
             self._load_model()
+            if self.model is None:
+                raise FileNotFoundError(
+                    f"Trained checkpoint not found at {self.checkpoint_path}. "
+                    "Real ML inference cannot be performed. "
+                    "Ensure Phase 5 training has been executed via: python ml_pipeline/train_ptbxl_multimodal.py"
+                )
             
         # Ensure model remains in eval mode
         self.model.eval()

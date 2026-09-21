@@ -2,8 +2,10 @@ import os
 import zipfile
 import pandas as pd
 import io
+from pathlib import Path
 
-ZIP_PATH = r"c:\Users\Aisha Fathima\OneDrive\Desktop\ML Project\ptb-xl-1.0.3.zip"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+ZIP_PATH = os.environ.get("PTBXL_ZIP_PATH", str(PROJECT_ROOT / "data" / "ptbxl" / "ptb-xl-1.0.3.zip"))
 
 def audit_ptbxl():
     print("==================================================")

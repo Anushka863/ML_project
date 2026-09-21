@@ -72,5 +72,10 @@ def predict_patient_risk(
     try:
         response = service.predict_patient_risk(request)
         return response
+    except FileNotFoundError as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Trained checkpoint not available: {str(e)}"
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction service error: {str(e)}")

@@ -9,7 +9,8 @@ from pathlib import Path
 
 def download_and_extract():
     file_id = "1proXkaBDxrPgIbopBDdM_uMgsfQaysSQ"
-    target_dir = Path(r"c:\Users\asus\Desktop\ML_PROJECT-Anushka_branch\ML_project\data\ptbxl")
+    project_root = Path(__file__).resolve().parent.parent
+    target_dir = project_root / "data" / "ptbxl"
     target_dir.mkdir(parents=True, exist_ok=True)
     zip_path = target_dir / "ptb-xl-1.0.3.zip"
 
