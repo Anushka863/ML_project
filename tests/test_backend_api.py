@@ -49,18 +49,20 @@ class TestBackendAPI(unittest.TestCase):
         self.assertEqual(data["status"], "healthy")
 
     def test_02_model_info_endpoint(self):
-        """GET /model-info returns Phase 5 model architecture details."""
+        """GET /model-info returns Clinical Multi-Disease GNN and Independent PTB-XL ECG model architecture details."""
         response = self.client.get("/model-info")
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertIn("PTB-XL Multimodal", data["model_name"])
+        self.assertIn("Clinical Multi-Disease GNN", data["model_name"])
+        self.assertIn("multidisease_gnn", data)
+        self.assertIn("ptbxl_ecg_branch", data)
         self.assertIn("architecture", data)
         self.assertIn("test_performance", data)
 
     def test_03_predict_valid_patient(self):
         """POST /predict executes inference if checkpoint exists or returns 503 if checkpoint not available."""
         response = self.client.post("/predict", json=self.valid_payload)
-        checkpoint_exists = (PROJECT_ROOT / "models" / "ptbxl_multimodal" / "best_model.pt").exists()
+        checkpoint_exists = (PROJECT_ROOT / "models" / "multidisease_gnn_best.pt").exists()
         if checkpoint_exists:
             self.assertEqual(response.status_code, 200)
             data = response.json()
@@ -69,9 +71,10 @@ class TestBackendAPI(unittest.TestCase):
             self.assertGreaterEqual(data["probability"], 0.0)
             self.assertLessEqual(data["probability"], 1.0)
             self.assertIn(data["risk_level"], ["Low Risk", "Moderate Risk", "High Risk"])
-            self.assertEqual(data["model"], "PTB-XL Multimodal GNN")
+            self.assertIn("MultiDiseaseGNN", data["model"])
             self.assertIn("disclaimer", data)
             self.assertIn("predictions", data)
+            self.assertIn("diseases", data)
         else:
             self.assertEqual(response.status_code, 503)
             data = response.json()

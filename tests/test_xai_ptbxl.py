@@ -38,7 +38,7 @@ from explainability.ptbxl_explainer import PTBXLExplainer, PTBXL_CLINICAL_COLS
 from app.preprocessing.ptbxl_preprocessor import PTBXLPreprocessor
 from backend.app.main import app
 
-EXPECTED_CHECKPOINT_SHA256 = "f116b5798cc1cf2ec7416746f3fda18a82686c60c9fde856fc3992ba6bc81f48"
+EXPECTED_CHECKPOINT_SHA256 = "48922961129a6c1a6d3594c0addfc29edc7fe90ee20f8d2a2c53e7624d0eac98"
 
 
 class TestPhase2ModelDerivedXAI(unittest.TestCase):

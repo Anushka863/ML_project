@@ -160,7 +160,7 @@ function PatientAssessment() {
           <div className="header-badge">Clinical Intake</div>
           <h1>Patient Assessment</h1>
           <p className="page-subtitle">
-            Enter the patient's clinical information to assess their health risk using the Phase 5 PTB-XL Multimodal GNN.
+            Enter the patient's clinical information to assess their health risk using the Clinical Multi-Disease GNN and Independent PTB-XL ECG.
           </p>
           <div style={{ marginTop: "1rem" }}>
             <button
@@ -236,7 +236,7 @@ function PatientAssessment() {
               Review Summary First
             </button>
             <button type="submit" className="primary-button submit-btn" disabled={loading}>
-              {loading ? "Analyzing Multimodal GNN..." : "Submit Assessment →"}
+              {loading ? "Analyzing Clinical GNN..." : "Submit Assessment →"}
             </button>
           </div>
         </form>

@@ -8,7 +8,7 @@ from backend.app.api.routes import router
 
 app = FastAPI(
     title="Explainable Multi-Disease Clinical Decision Support System",
-    description="FastAPI Backend for Phase 5 PTB-XL Multimodal GNN clinical risk prediction & XAI",
+    description="FastAPI Backend for Clinical Multi-Disease GNN and Independent PTB-XL ECG Analysis",
     version="1.0.0"
 )
 

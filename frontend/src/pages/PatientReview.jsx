@@ -63,7 +63,7 @@ function PatientReview() {
           <div className="header-badge">Clinical Review</div>
           <h1>Patient Summary</h1>
           <p className="page-subtitle">
-            Verify patient clinical parameters before running Phase 5 PTB-XL Multimodal GNN risk assessment.
+            Verify patient clinical parameters before running Clinical Multi-Disease GNN risk assessment.
           </p>
         </header>
 

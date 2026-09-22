@@ -50,7 +50,7 @@ export function formatPatientPayload(patientData) {
 }
 
 /**
- * Executes patient risk prediction against Phase 5 PTB-XL Multimodal GNN backend.
+ * Executes patient risk prediction against Clinical Multi-Disease GNN and Independent PTB-XL ECG backend.
  * @param {Object} patientData - Form state from patient intake.
  * @returns {Promise<Object>} PredictionResponse data.
  */

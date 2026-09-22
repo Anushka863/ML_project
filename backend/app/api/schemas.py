@@ -75,17 +75,30 @@ class AdditionalClinicalMarker(BaseModel):
     note: str = "General clinical marker; NOT an input feature to the PTB-XL ECG GNN model."
 
 
+class DiseaseDetail(BaseModel):
+    disease: str
+    probability: float
+    probability_pct: float
+    risk_level: str
+    status: str
+    confidence: float
+    top_drivers: Optional[List[Dict[str, Any]]] = None
+    attributions: Optional[List[Dict[str, Any]]] = None
+
+
 class PredictionResponse(BaseModel):
     status: str = "success"
-    prediction: str = Field(..., description="Normal or Abnormal prediction from PTB-XL Multimodal GNN")
-    probability: float = Field(..., ge=0.0, le=1.0, description="Model sigmoid probability for abnormality")
+    prediction: str = Field(..., description="Overall prediction status")
+    probability: float = Field(..., ge=0.0, le=1.0, description="Highest model sigmoid probability")
     confidence: float = Field(..., ge=0.0, le=100.0, description="Confidence percentage")
     risk_level: str = Field(..., description="Risk category: Low Risk, Moderate Risk, or High Risk")
-    model: str = Field(default="PTB-XL Multimodal GNN", description="Model identifier")
+    model: str = Field(default="Multi-Disease Graph Neural Network (MultiDiseaseGNN)", description="Model identifier")
     disclaimer: str = Field(
-        default="This AI-generated result is for research/educational purposes and is not a medical diagnosis.",
+        default="This AI-generated result is for clinical decision support research and is not a definitive medical diagnosis.",
         description="Medical disclaimer"
     )
+    diseases: Optional[Dict[str, DiseaseDetail]] = None
+    ecg_assessment: Optional[Dict[str, Any]] = None
     predictions: Optional[Dict[str, SingleDiseasePrediction]] = None
     clinical_explanation: Optional[List[FeatureAttribution]] = None
     image_explanation: Optional[Dict[str, Any]] = None
