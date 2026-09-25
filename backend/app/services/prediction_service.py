@@ -13,13 +13,17 @@ if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
 from app.inference.multidisease_inference import MultiDiseaseInferenceService
+from app.inference.odir_inference import ODIRInferenceService
 from backend.app.api.schemas import (
     PatientAssessmentRequest,
     PredictionResponse,
     DiseaseDetail,
     SingleDiseasePrediction,
     FeatureAttribution,
-    AdditionalClinicalMarker
+    AdditionalClinicalMarker,
+    ODIRAssessmentRequest,
+    ODIRPredictionResponse,
+    ODIRDiseaseDetail
 )
 
 logger = logging.getLogger("prediction_service")
@@ -177,3 +181,48 @@ class ClinicalPredictionService:
             xai={"diseases": result["diseases"], "ecg": ecg_data.get("ecg_explanation")},
             additional_clinical_info=additional_info
         )
+
+    def predict_odir_risk(
+        self,
+        age: float,
+        sex: str,
+        left_img: Any,
+        right_img: Any
+    ) -> ODIRPredictionResponse:
+        """
+        Executes dedicated ODIR-5K Ophthalmic Multimodal prediction.
+        Supports PIL Image, file path, or base64 data.
+        """
+        odir_service = ODIRInferenceService.get_instance()
+        result = odir_service.predict(
+            age=age,
+            sex=sex,
+            left_image=left_img,
+            right_image=right_img,
+            include_xai=True
+        )
+
+        disease_details = {
+            code: ODIRDiseaseDetail(
+                code=d["code"],
+                name=d["name"],
+                probability=d["probability"],
+                probability_pct=d["probability_pct"],
+                risk_level=d["risk_level"],
+                status=d["status"],
+                confidence=d["confidence"]
+            )
+            for code, d in result["diseases"].items()
+        }
+
+        return ODIRPredictionResponse(
+            status="success",
+            branch=result["branch"],
+            model_name=result["model_name"],
+            prediction=result["prediction"],
+            patient_demographics=result["patient_demographics"],
+            diseases=disease_details,
+            xai=result.get("xai"),
+            disclaimer=result["disclaimer"]
+        )
+

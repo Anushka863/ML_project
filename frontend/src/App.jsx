@@ -4,6 +4,7 @@ import HowItWorks from "./pages/HowItWorks";
 import PatientAssessment from "./pages/PatientAssessment";
 import PatientReview from "./pages/PatientReview";
 import ResultsPage from "./pages/ResultsPage";
+import OphthalmicAssessment from "./pages/OphthalmicAssessment";
 import { PatientProvider } from "./context/PatientContext";
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
           <Route path="/patient_assessment" element={<PatientAssessment />} />
           <Route path="/patient-review" element={<PatientReview />} />
           <Route path="/patient_review" element={<PatientReview />} />
+          <Route path="/ophthalmic-assessment" element={<OphthalmicAssessment />} />
+          <Route path="/ophthalmic_assessment" element={<OphthalmicAssessment />} />
           <Route path="/results" element={<ResultsPage />} />
           <Route path="*" element={<Landing />} />
         </Routes>

@@ -108,3 +108,37 @@ class PredictionResponse(BaseModel):
     additional_clinical_info: Optional[List[AdditionalClinicalMarker]] = None
 
 
+class ODIRDiseaseDetail(BaseModel):
+    code: str
+    name: str
+    probability: float
+    probability_pct: float
+    risk_level: str
+    status: str
+    confidence: float
+
+
+class ODIRAssessmentRequest(BaseModel):
+    age: float = Field(..., gt=0, lt=120, description="Patient age in years")
+    sex: str = Field(..., description="Sex: Male or Female")
+    left_image_b64: Optional[str] = Field(None, description="Base64 encoded Left eye fundus image")
+    right_image_b64: Optional[str] = Field(None, description="Base64 encoded Right eye fundus image")
+    left_image_path: Optional[str] = Field(None, description="Local path to Left eye fundus image")
+    right_image_path: Optional[str] = Field(None, description="Local path to Right eye fundus image")
+
+
+class ODIRPredictionResponse(BaseModel):
+    status: str = "success"
+    branch: str = "ODIR-5K Ophthalmic Multimodal Branch"
+    model_name: str = "ODIRMultimodalGNN (ResNet-18 Bilateral Vision + Demographic MLP + Patient Similarity Graph)"
+    prediction: str = Field(..., description="Primary clinical finding summary")
+    patient_demographics: Dict[str, Any]
+    diseases: Dict[str, ODIRDiseaseDetail]
+    xai: Optional[Dict[str, Any]] = None
+    disclaimer: str = Field(
+        default="This AI-generated ophthalmic risk assessment is strictly for clinical decision support research and is not a replacement for professional ophthalmological examination.",
+        description="Medical disclaimer"
+    )
+
+
+

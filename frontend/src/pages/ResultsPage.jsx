@@ -77,6 +77,8 @@ function ResultsPage() {
   const leadAttrs = ecgData?.lead_attributions || {};
   const temporalAttrs = ecgData?.temporal_attributions || [];
   const topLeads = ecgData?.top_leads || [];
+  const maxLeadAttr = Object.values(leadAttrs).reduce((max, v) => Math.max(max, Number(v) || 0), 0);
+  const hasGenuineEcgXai = Boolean(ecgData && maxLeadAttr > 0.00001);
 
   const getRiskTheme = (level) => {
     const l = String(level).toLowerCase();
@@ -448,9 +450,11 @@ function ResultsPage() {
             </div>
           </div>
 
-          <p style={{ color: "#64748b", fontSize: "0.88rem", marginBottom: "1.25rem", lineHeight: "1.5" }}>
-            Viewing genuine Integrated Gradients attributions for <strong>{activeDiseaseObj.title}</strong>. Positive values push the neural network toward higher disease risk, while negative values lower risk.
-          </p>
+          {activeTab !== "ecg" && (
+            <p style={{ color: "#64748b", fontSize: "0.88rem", marginBottom: "1.25rem", lineHeight: "1.5" }}>
+              Viewing genuine Integrated Gradients attributions for <strong>{activeDiseaseObj.title}</strong>. Positive values push the neural network toward higher disease risk, while negative values lower risk.
+            </p>
+          )}
 
           {activeTab !== "ecg" ? (
             <div style={{ display: "grid", gap: "0.75rem" }}>
@@ -496,8 +500,8 @@ function ResultsPage() {
                 );
               })}
             </div>
-          ) : (
-            /* ECG 12-Lead Attribution Content */
+          ) : hasGenuineEcgXai ? (
+            /* ECG 12-Lead Attribution Content (When Genuine Waveform XAI is Present) */
             <div>
               <p style={{ color: "#64748b", fontSize: "0.88rem", marginBottom: "1rem" }}>
                 Attribution magnitude across 12 ECG leads from the trained 1D CNN waveform encoder.
@@ -559,6 +563,28 @@ function ResultsPage() {
                   </div>
                 </div>
               )}
+            </div>
+          ) : (
+            /* ECG XAI Unavailable Notice (When No Waveform Was Provided) */
+            <div
+              style={{
+                padding: "2rem 1.5rem",
+                background: "#f8fafc",
+                borderRadius: "8px",
+                border: "1px solid #e2e8f0",
+                textAlign: "center"
+              }}
+            >
+              <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>📈</div>
+              <h4 style={{ margin: "0 0 0.5rem 0", color: "#0f172a", fontSize: "1.1rem", fontWeight: "700" }}>
+                12-Lead ECG Explainability
+              </h4>
+              <p style={{ color: "#475569", fontSize: "0.92rem", marginBottom: "0.75rem", lineHeight: "1.5" }}>
+                ECG-specific XAI is unavailable for this assessment because no raw 12-lead ECG waveform was provided.
+              </p>
+              <p style={{ color: "#64748b", fontSize: "0.85rem", margin: 0, fontStyle: "italic" }}>
+                Use the ECG assessment with a raw 12-lead waveform to view lead-level and temporal ECG attributions.
+              </p>
             </div>
           )}
         </div>

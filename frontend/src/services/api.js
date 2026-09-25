@@ -96,6 +96,58 @@ export async function predictPatientRisk(patientData) {
 }
 
 /**
+ * Executes ODIR-5K Ophthalmic Multimodal prediction.
+ * @param {Object|FormData} payload - Form JSON or FormData with images.
+ * @returns {Promise<Object>} ODIRPredictionResponse data.
+ */
+export async function predictODIRRisk(payload) {
+  try {
+    const isFormData = payload instanceof FormData;
+    const url = isFormData ? `${API_BASE_URL}/predict-odir/upload` : `${API_BASE_URL}/predict-odir`;
+    
+    const options = {
+      method: "POST",
+      body: isFormData ? payload : JSON.stringify(payload)
+    };
+
+    if (!isFormData) {
+      options.headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      };
+    }
+
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      let errorMessage = `Server responded with status ${response.status}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.detail) {
+          if (Array.isArray(errorData.detail)) {
+            errorMessage = errorData.detail.map((err) => `${err.loc?.join(".") || "field"}: ${err.msg}`).join(", ");
+          } else {
+            errorMessage = errorData.detail;
+          }
+        }
+      } catch {
+        errorMessage = response.statusText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("ODIR Prediction API request failed:", error);
+    if (error.message && error.message.includes("Failed to fetch")) {
+      throw new Error("Cannot connect to backend server. Make sure FastAPI server is running on " + API_BASE_URL);
+    }
+    throw error;
+  }
+}
+
+/**
  * Health check endpoint test.
  */
 export async function checkBackendHealth() {
@@ -110,3 +162,4 @@ export async function getModelInfo() {
   const response = await fetch(`${API_BASE_URL}/model-info`);
   return response.json();
 }
+
